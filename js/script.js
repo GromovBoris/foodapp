@@ -1,12 +1,12 @@
 window.addEventListener("DOMContentLoaded", () => {
-  // Tabs realisation
+  // TABS
 
   //   get listeners
   const tabs = document.querySelectorAll(".tabheader__item");
   const tabsContent = document.querySelectorAll(".tabcontent");
   const tabsParent = document.querySelector(".tabheader__items");
 
-  //   hide content function
+  //   hide content
   function hideTabContent() {
     tabsContent.forEach((item) => {
       item.classList.add("hide");
@@ -17,7 +17,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  //   show content function
+  //   show content
   function showTabContent(i = 0) {
     tabsContent[i].classList.add("show", "fade");
     tabsContent[i].classList.remove("hide");
@@ -39,4 +39,69 @@ window.addEventListener("DOMContentLoaded", () => {
       });
     }
   });
+
+  //TIMER
+
+  const deadline = "2024-02-11";
+
+  // difference current dedline
+
+  function getTimeRemaining(endtime) {
+    let days, hours, minutes, seconds;
+    const t = Date.parse(endtime) - Date.parse(new Date());
+
+    if (t <= 0) {
+      days = 0;
+      hours = 0;
+      minutes = 0;
+      seconds = 0;
+    } else {
+      days = Math.floor(t / (1000 * 60 * 60 * 24));
+      seconds = Math.floor((t / 1000) % 60);
+      minutes = Math.floor((t / 1000 / 60) % 60);
+      hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+    }
+
+    return {
+      total: t,
+      days: days,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+    };
+  }
+
+  // show null+
+
+  function getZero(num) {
+    if (num >= 0 && num < 10) {
+      return "0" + num;
+    } else {
+      return num;
+    }
+  }
+
+  // setting clock
+
+  function setClock(selector, endtime) {
+    const timer = document.querySelector(selector);
+    const days = timer.querySelector("#days");
+    const hours = timer.querySelector("#hours");
+    const minutes = timer.querySelector("#minutes");
+    const seconds = timer.querySelector("#seconds");
+    const timeInterval = setInterval(updateClock, 1000);
+
+    function updateClock() {
+      const t = getTimeRemaining(endtime);
+      days.innerHTML = getZero(t.days);
+      hours.innerHTML = getZero(t.hours);
+      minutes.innerHTML = getZero(t.minutes);
+      seconds.innerHTML = getZero(t.seconds);
+
+      if (t.total <= 0) {
+        clearInterval(timeInterval);
+      }
+    }
+  }
+  setClock(".timer", deadline);
 });
