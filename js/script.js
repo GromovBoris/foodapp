@@ -220,4 +220,47 @@ window.addEventListener("DOMContentLoaded", () => {
     21,
     ".menu .container"
   ).render();
+
+  //FORMS
+
+  const forms = document.querySelectorAll("form");
+
+  const message = {
+    loading: "Идет загрузка",
+    success: "Спасибо! Мы с вами свяжемся",
+    failure: "Что-то пошло не так...",
+  };
+
+  forms.forEach((item) => {
+    postData(item);
+  });
+
+  function postData(form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const statusMessage = document.createElement("div");
+      statusMessage.classList.add("status");
+      statusMessage.textContent = message.loading;
+      form.append(statusMessage);
+
+      const request = new XMLHttpRequest();
+      request.open("POST", "server.php");
+
+      request.setRequestHeader("Content-type", "multipart/form-data");
+      const formData = new FormData(form);
+
+      request.send(formData);
+
+      request.addEventListener("load", () => {
+        if (request.status === 200) {
+          console.log(request.response);
+          statusMessage.textContent = message.success;
+        } else {
+          alert(request.status);
+          statusMessage.textContent = message.failure;
+        }
+      });
+    });
+  }
 });
