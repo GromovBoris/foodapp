@@ -205,8 +205,8 @@ window.addEventListener("DOMContentLoaded", () => {
     return await res.json();
   };
 
-  getRecourse("http://localhost:3000/menu").then((data) => {
-    data.forEach(({ img, altimg, title, descr, price }) => {
+  axios.get("http://localhost:3000/menu").then((data) => {
+    data.data.forEach(({ img, altimg, title, descr, price }) => {
       new MenuCard(
         img,
         altimg,
@@ -296,4 +296,80 @@ window.addEventListener("DOMContentLoaded", () => {
       closeModal();
     }, 3000);
   }
+
+  // SLIDER
+
+  const sliderTotal = document.querySelector("#total");
+  const container = document.querySelector(".offer__slider-wrapper");
+  const imagesPath = "../img/slider/";
+  const sliderPrev = document.querySelector(".offer__slider-prev");
+  const sliderNext = document.querySelector(".offer__slider-next");
+  const sliderCurrent = document.querySelector("#current");
+  let images;
+  let currentIndex = 0;
+
+  function initSlider() {
+    images = document.querySelectorAll(".offer__slide");
+  }
+
+  // show/hide funcs
+
+  function showCurrentImage() {
+    images[currentIndex].classList.remove("hide");
+    images[currentIndex].classList.add("show");
+  }
+
+  function hideCurrentImage() {
+    images[currentIndex].classList.remove("show");
+    images[currentIndex].classList.add("hide");
+  }
+  // Обработчик клика на кнопку "назад"
+  sliderPrev.addEventListener("click", () => {
+    currentIndex--;
+    if (currentIndex < 0) {
+      currentIndex = images.length - 1;
+    }
+    showCurrentImage();
+  });
+
+  // Обработчик клика на кнопку "вперед"
+  sliderNext.addEventListener("click", () => {
+    currentIndex++;
+    if (currentIndex >= images.length) {
+      currentIndex = 0;
+    }
+    showCurrentImage();
+  });
+
+  // taking imgs
+
+  fetch(imagesPath)
+    .then((response) => response.text())
+    .then((data) => {
+      const div = document.createElement("div");
+      div.innerHTML = data;
+      const links = div.querySelectorAll("a[href$='.jpg']");
+      if (links.length < 10) {
+        sliderTotal.textContent = `0${links.length}`;
+      } else {
+        sliderTotal.textContent = links.length;
+      }
+      links.forEach((link, index) => {
+        const fileName = link.getAttribute("href").replace(imagesPath, "");
+        const slide = document.createElement("div");
+        slide.classList.add("offer__slide");
+        if (index !== 0) {
+          slide.classList.add("hide");
+        } else {
+          slide.classList.add("show");
+        }
+        const img = document.createElement("img");
+        img.src = imagesPath + fileName;
+        img.alt = fileName.replace(".jpg", "");
+        slide.appendChild(img);
+        container.appendChild(slide);
+      });
+      initSlider();
+      console.log(images);
+    });
 });
