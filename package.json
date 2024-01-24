@@ -1,0 +1,28 @@
+{
+  "name": "foodapp",
+  "version": "1.0.0",
+  "description": "my first React app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GromovBoris/foodapp.git"
+  },
+  "keywords": [
+    "food",
+    "app",
+    "react",
+    "js"
+  ],
+  "author": "gromov boris",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GromovBoris/foodapp/issues"
+  },
+  "homepage": "https://github.com/GromovBoris/foodapp#readme",
+  "devDependencies": {
+    "json-server": "^1.0.0-alpha.22"
+  }
+}
