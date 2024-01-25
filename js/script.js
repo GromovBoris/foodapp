@@ -196,14 +196,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // get function
 
-  const getRecourse = async (url) => {
-    const res = await fetch(url);
+  // const getRecourse = async (url) => {
+  //   const res = await fetch(url);
 
-    if (!res.ok) {
-      throw new Error(`Could not fetch ${url}, status ${res.status}`);
-    }
-    return await res.json();
-  };
+  //   if (!res.ok) {
+  //     throw new Error(`Could not fetch ${url}, status ${res.status}`);
+  //   }
+  //   return await res.json();
+  // };
 
   axios.get("http://localhost:3000/menu").then((data) => {
     data.data.forEach(({ img, altimg, title, descr, price }) => {
@@ -300,48 +300,51 @@ window.addEventListener("DOMContentLoaded", () => {
   // SLIDER
 
   const sliderTotal = document.querySelector("#total");
+  const sliderCurrent = document.querySelector("#current");
   const container = document.querySelector(".offer__slider-wrapper");
   const imagesPath = "../img/slider/";
+
   const sliderPrev = document.querySelector(".offer__slider-prev");
   const sliderNext = document.querySelector(".offer__slider-next");
-  const sliderCurrent = document.querySelector("#current");
   let images;
   let currentIndex = 0;
+
+  // images count func
 
   function initSlider() {
     images = document.querySelectorAll(".offer__slide");
   }
 
-  // show/hide funcs
+  // images show/hide func
 
-  function showCurrentImage() {
-    images[currentIndex].classList.remove("hide");
-    images[currentIndex].classList.add("show");
-  }
-
-  function hideCurrentImage() {
-    images[currentIndex].classList.remove("show");
+  function changeCurrentImage(index) {
+    images = document.querySelectorAll(".offer__slide");
+    console.log(images[currentIndex], images[index]);
     images[currentIndex].classList.add("hide");
+    images[currentIndex].classList.remove("show");
+    images[index].classList.add("show");
+    images[index].classList.remove("hide");
+
+    const imageElement = document.querySelector(".offer__slide.show img");
+    console.log(imageElement);
+    // let slideDiscrb = parseInt($(this).find("img").attr("alt"));
+
+    // var imgElement = document.querySelector('img');
+    var altValue = imageElement.getAttribute("alt");
+
+    const imagePath = `../img/slider/${altValue}.jpg`;
+    imageElement.setAttribute("src", imagePath);
+
+    currentIndex = index;
+
+    if (currentIndex + 1 < 10) {
+      sliderCurrent.textContent = `0${currentIndex + 1}`;
+    } else {
+      sliderCurrent.textContent = `${currentIndex + 1}`;
+    }
   }
-  // Обработчик клика на кнопку "назад"
-  sliderPrev.addEventListener("click", () => {
-    currentIndex--;
-    if (currentIndex < 0) {
-      currentIndex = images.length - 1;
-    }
-    showCurrentImage();
-  });
 
-  // Обработчик клика на кнопку "вперед"
-  sliderNext.addEventListener("click", () => {
-    currentIndex++;
-    if (currentIndex >= images.length) {
-      currentIndex = 0;
-    }
-    showCurrentImage();
-  });
-
-  // taking imgs
+  // taking imgs + funcs
 
   fetch(imagesPath)
     .then((response) => response.text())
@@ -349,6 +352,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const div = document.createElement("div");
       div.innerHTML = data;
       const links = div.querySelectorAll("a[href$='.jpg']");
+      sliderCurrent.textContent = "01";
       if (links.length < 10) {
         sliderTotal.textContent = `0${links.length}`;
       } else {
@@ -369,7 +373,24 @@ window.addEventListener("DOMContentLoaded", () => {
         slide.appendChild(img);
         container.appendChild(slide);
       });
+
       initSlider();
-      console.log(images);
+      const imagesCount = images.length;
+      let index;
+
+      sliderPrev.addEventListener("click", () => {
+        index = currentIndex - 1;
+        if (index < 0) {
+          index = imagesCount - 1;
+        }
+        changeCurrentImage(index);
+      });
+      sliderNext.addEventListener("click", () => {
+        index = currentIndex + 1;
+        if (index >= imagesCount) {
+          index = 0;
+        }
+        changeCurrentImage(index);
+      });
     });
 });
