@@ -303,48 +303,19 @@ window.addEventListener("DOMContentLoaded", () => {
   const sliderCurrent = document.querySelector("#current");
   const container = document.querySelector(".offer__slider-wrapper");
   const imagesPath = "../img/slider/";
-
   const sliderPrev = document.querySelector(".offer__slider-prev");
   const sliderNext = document.querySelector(".offer__slider-next");
-  let images;
-  let currentIndex = 0;
 
-  // images count func
+  // V2 CARUSEL
+
+  const slidesField = document.createElement("div");
+  const width = window.getComputedStyle(container).width;
+  slidesField.classList.add("offer__slider-inner");
+  container.appendChild(slidesField);
 
   function initSlider() {
     images = document.querySelectorAll(".offer__slide");
   }
-
-  // images show/hide func
-
-  function changeCurrentImage(index) {
-    images = document.querySelectorAll(".offer__slide");
-    console.log(images[currentIndex], images[index]);
-    images[currentIndex].classList.add("hide");
-    images[currentIndex].classList.remove("show");
-    images[index].classList.add("show");
-    images[index].classList.remove("hide");
-
-    const imageElement = document.querySelector(".offer__slide.show img");
-    console.log(imageElement);
-    // let slideDiscrb = parseInt($(this).find("img").attr("alt"));
-
-    // var imgElement = document.querySelector('img');
-    var altValue = imageElement.getAttribute("alt");
-
-    const imagePath = `../img/slider/${altValue}.jpg`;
-    imageElement.setAttribute("src", imagePath);
-
-    currentIndex = index;
-
-    if (currentIndex + 1 < 10) {
-      sliderCurrent.textContent = `0${currentIndex + 1}`;
-    } else {
-      sliderCurrent.textContent = `${currentIndex + 1}`;
-    }
-  }
-
-  // taking imgs + funcs
 
   fetch(imagesPath)
     .then((response) => response.text())
@@ -362,35 +333,177 @@ window.addEventListener("DOMContentLoaded", () => {
         const fileName = link.getAttribute("href").replace(imagesPath, "");
         const slide = document.createElement("div");
         slide.classList.add("offer__slide");
-        if (index !== 0) {
-          slide.classList.add("hide");
-        } else {
-          slide.classList.add("show");
-        }
+        // if (index !== 0) {
+        //   slide.classList.add("hide");
+        // } else {
+        //   slide.classList.add("show");
+        // }
         const img = document.createElement("img");
         img.src = imagesPath + fileName;
         img.alt = fileName.replace(".jpg", "");
         slide.appendChild(img);
-        container.appendChild(slide);
+        slidesField.appendChild(slide);
       });
 
       initSlider();
-      const imagesCount = images.length;
-      let index;
+      let sliderIndex = 1;
+      let offset = 0;
+
+      slidesField.style.width = 100 * links.length + "%";
+      slidesField.style.display = "flex";
+      slidesField.style.transition = "0.5s all";
+      container.style.overflow = "hidden";
+      links.forEach((link) => {
+        link.style.width = width;
+      });
+
+      sliderNext.addEventListener("click", () => {
+        console.log(width);
+        if (offset == +width.slice(0, width.length - 2) * (links.length - 1)) {
+          offset = 0;
+        } else {
+          offset += +width.slice(0, width.length - 2);
+        }
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (sliderIndex == links.length) {
+          sliderIndex = 1;
+        } else {
+          sliderIndex++;
+        }
+
+        if (links.length < 10) {
+          sliderTotal.textContent = `0${links.length}`;
+          sliderCurrent.textContent = `0${sliderIndex}`;
+        } else {
+          sliderTotal.textContent = links.length;
+          sliderCurrent.textContent = sliderIndex;
+        }
+      });
 
       sliderPrev.addEventListener("click", () => {
-        index = currentIndex - 1;
-        if (index < 0) {
-          index = imagesCount - 1;
+        console.log(width);
+        if (offset == 0) {
+          offset = +width.slice(0, width.length - 2) * (links.length - 1);
+        } else {
+          offset -= +width.slice(0, width.length - 2);
         }
-        changeCurrentImage(index);
-      });
-      sliderNext.addEventListener("click", () => {
-        index = currentIndex + 1;
-        if (index >= imagesCount) {
-          index = 0;
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (sliderIndex == 1) {
+          sliderIndex = links.length;
+        } else {
+          sliderIndex--;
         }
-        changeCurrentImage(index);
+
+        if (links.length < 10) {
+          sliderTotal.textContent = `0${links.length}`;
+          sliderCurrent.textContent = `0${sliderIndex}`;
+        } else {
+          sliderTotal.textContent = links.length;
+          sliderCurrent.textContent = sliderIndex;
+        }
       });
+
+      // let index;
+
+      // sliderPrev.addEventListener("click", () => {
+      //   index = currentIndex - 1;
+      //   if (index < 0) {
+      //     index = imagesCount - 1;
+      //   }
+      //   changeCurrentImage(index);
+      // });
+      // sliderNext.addEventListener("click", () => {
+      //   index = currentIndex + 1;
+      //   if (index >= imagesCount) {
+      //     index = 0;
+      //   }
+      //   changeCurrentImage(index);
+      // });
     });
+
+  // V1 (OWN)
+
+  // let images;
+  // let currentIndex = 0;
+
+  // // images count func
+
+  // function initSlider() {
+  //   images = document.querySelectorAll(".offer__slide");
+  // }
+
+  // // images show/hide func
+
+  // function changeCurrentImage(index) {
+  //   images = document.querySelectorAll(".offer__slide");
+  //   images[currentIndex].classList.add("hide");
+  //   images[currentIndex].classList.remove("show");
+  //   images[index].classList.add("show");
+  //   images[index].classList.remove("hide");
+
+  //   const imageElement = document.querySelector(".offer__slide.show img");
+  //   const altValue = imageElement.getAttribute("alt");
+  //   const imagePath = `../img/slider/${altValue}.jpg`;
+  //   imageElement.setAttribute("src", imagePath);
+
+  //   currentIndex = index;
+
+  //   if (currentIndex + 1 < 10) {
+  //     sliderCurrent.textContent = `0${currentIndex + 1}`;
+  //   } else {
+  //     sliderCurrent.textContent = `${currentIndex + 1}`;
+  //   }
+  // }
+
+  // // taking imgs + funcs
+
+  // fetch(imagesPath)
+  //   .then((response) => response.text())
+  //   .then((data) => {
+  //     const div = document.createElement("div");
+  //     div.innerHTML = data;
+  //     const links = div.querySelectorAll("a[href$='.jpg']");
+  //     sliderCurrent.textContent = "01";
+  //     if (links.length < 10) {
+  //       sliderTotal.textContent = `0${links.length}`;
+  //     } else {
+  //       sliderTotal.textContent = links.length;
+  //     }
+  //     links.forEach((link, index) => {
+  //       const fileName = link.getAttribute("href").replace(imagesPath, "");
+  //       const slide = document.createElement("div");
+  //       slide.classList.add("offer__slide");
+  //       if (index !== 0) {
+  //         slide.classList.add("hide");
+  //       } else {
+  //         slide.classList.add("show");
+  //       }
+  //       const img = document.createElement("img");
+  //       img.src = imagesPath + fileName;
+  //       img.alt = fileName.replace(".jpg", "");
+  //       slide.appendChild(img);
+  //       container.appendChild(slide);
+  //     });
+
+  //     initSlider();
+  //     const imagesCount = images.length;
+  //     let index;
+
+  //     sliderPrev.addEventListener("click", () => {
+  //       index = currentIndex - 1;
+  //       if (index < 0) {
+  //         index = imagesCount - 1;
+  //       }
+  //       changeCurrentImage(index);
+  //     });
+  //     sliderNext.addEventListener("click", () => {
+  //       index = currentIndex + 1;
+  //       if (index >= imagesCount) {
+  //         index = 0;
+  //       }
+  //       changeCurrentImage(index);
+  //     });
+  //   });
 });
