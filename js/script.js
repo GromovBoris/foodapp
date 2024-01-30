@@ -381,11 +381,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
       // next-prev clicks
 
+      function deleteDigits(str) {
+        return +str.replace(/\D/g, "");
+      }
+
       sliderNext.addEventListener("click", () => {
-        if (offset == +width.slice(0, width.length - 2) * (links.length - 1)) {
+        if (offset == deleteDigits(width) * (links.length - 1)) {
           offset = 0;
         } else {
-          offset += +width.slice(0, width.length - 2);
+          offset += deleteDigits(width);
         }
         slidesField.style.transform = `translateX(-${offset}px)`;
 
@@ -408,9 +412,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
       sliderPrev.addEventListener("click", () => {
         if (offset == 0) {
-          offset = +width.slice(0, width.length - 2) * (links.length - 1);
+          offset = deleteDigits(width) * (links.length - 1);
         } else {
-          offset -= +width.slice(0, width.length - 2);
+          offset -= deleteDigits(width);
         }
         slidesField.style.transform = `translateX(-${offset}px)`;
 
@@ -435,7 +439,7 @@ window.addEventListener("DOMContentLoaded", () => {
         dot.addEventListener("click", (e) => {
           const slideTo = e.target.getAttribute("data-slide-to");
           sliderIndex = slideTo;
-          offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+          offset = deleteDigits(width) * (slideTo - 1);
           slidesField.style.transform = `translateX(-${offset}px)`;
           if (links.length < 10) {
             sliderCurrent.textContent = `0${sliderIndex}`;
